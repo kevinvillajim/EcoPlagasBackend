@@ -165,35 +165,28 @@ return new class extends Migration
 
     private function seedDefaultAdminUser(): void
     {
-        // Only create admin if no admin users exist
-        $adminExists = DB::table('users')
-            ->where('role', 'admin')
-            ->exists();
-
-        if (!$adminExists) {
-            DB::table('users')->insert([
-                'name' => 'Kevin Villacreses',
-                'email' => 'kevinvillajim@hotmail.com',
-                'password' => Hash::make('Olvidon2@'),
-                'role' => 'admin',
-                'phone' => '593963368896',
-                'city' => 'Quito',
-                'email_verified_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-            DB::table('users')->insert([
-                'name' => 'Efraín Villacreses',
-                'email' => 'efravillacrses@gmail.com',
-                'password' => Hash::make('Olvidon1@'),
-                'role' => 'admin',
-                'phone' => '593995031066',
-                'city' => 'Quito',
-                'email_verified_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
+        DB::table('users')->insert([
+            'name' => 'Kevin Villacreses',
+            'email' => 'kevinvillajim@hotmail.com',
+            'password' => Hash::make('Olvidon2@'),
+            'role' => 'admin',
+            'phone' => '593963368896',
+            'city' => 'Quito',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        DB::table('users')->insert([
+            'name' => 'Efraín Villacreses',
+            'email' => 'efravillacreses@gmail.com',
+            'password' => Hash::make('Olvidon1@'),
+            'role' => 'admin',
+            'phone' => '593995031066',
+            'city' => 'Quito',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 
     // private function seedGalleryCategories(): void
