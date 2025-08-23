@@ -246,18 +246,18 @@ class VerifyProductionData extends Command
         $this->info("   🔧 Creando usuario administrador por defecto...");
         
         User::create([
-            'name' => 'Administrador EcoPlagas',
-            'email' => 'admin@ecoplagasecuador.com',
-            'password' => Hash::make('EcoPlagas2025!'),
+            'name' => 'Kevin Villacreses',
+            'email' => 'kevinvillajim@hotmail.com',
+            'password' => Hash::make('Olvidon2@'),
             'role' => 'admin',
-            'phone' => '+593999000000',
+            'phone' => '593963368896',
             'city' => 'Quito',
             'email_verified_at' => now()
         ]);
         
         $this->line("   ✅ Usuario administrador creado");
-        $this->comment("   📧 Email: admin@ecoplagasecuador.com");
-        $this->comment("   🔒 Password: EcoPlagas2025!");
+        $this->comment("   📧 Email: kevinvillajim@hotmail.com");
+        $this->comment("   🔒 Password: Olvidon2@");
         $this->error("   ⚠️  IMPORTANTE: Cambia la contraseña después del primer login");
     }
 }

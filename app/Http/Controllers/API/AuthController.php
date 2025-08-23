@@ -310,20 +310,24 @@ class AuthController extends Controller
      */
     public function updateProfile(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
-            'avatar' => 'nullable|string|max:255'
-        ], [
-            'name.required' => 'El nombre es requerido',
-            'name.max' => 'El nombre no debe exceder 255 caracteres',
-            'phone.max' => 'El teléfono no debe exceder 20 caracteres',
-            'address.max' => 'La dirección no debe exceder 500 caracteres'
-        ]);
-
         try {
-            $user = $this->authService->updateProfile($request->user(), $request->validated());
+            $validatedData = $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                'email' => 'sometimes|required|email|unique:users,email,' . $request->user()->id,
+                'phone' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:500',
+                'avatar' => 'nullable|string|max:255'
+            ], [
+                'name.required' => 'El nombre es requerido',
+                'name.max' => 'El nombre no debe exceder 255 caracteres',
+                'email.required' => 'El correo electrónico es requerido',
+                'email.email' => 'El correo electrónico debe ser válido',
+                'email.unique' => 'Este correo electrónico ya está en uso',
+                'phone.max' => 'El teléfono no debe exceder 20 caracteres',
+                'address.max' => 'La dirección no debe exceder 500 caracteres'
+            ]);
+            
+            $user = $this->authService->updateProfile($request->user(), $validatedData);
             
             return response()->json([
                 'success' => true,

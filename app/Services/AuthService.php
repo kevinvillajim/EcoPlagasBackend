@@ -130,7 +130,8 @@ class AuthService
     public function updateProfile(User $user, array $data)
     {
         // Remove sensitive fields that shouldn't be updated via this method
-        unset($data['password'], $data['role'], $data['email']);
+        // Email is now allowed since it has proper validation in the controller
+        unset($data['password'], $data['role']);
         
         $user->update($data);
         

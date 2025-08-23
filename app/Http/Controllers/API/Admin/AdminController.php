@@ -30,18 +30,30 @@ class AdminController extends Controller
     public function dashboard(Request $request): JsonResponse
     {
         try {
+            // Test basic stats first
             $stats = $this->dashboardService->getAdminStats();
-            $monthlyData = $this->dashboardService->getMonthlyGrowthData();
-            $serviceDistribution = $this->dashboardService->getServiceDistribution();
+            
+            // Test recent activities
+            $recentActivities = $this->dashboardService->getRecentActivities(4);
+            
+            // Test today scheduled
+            $todayScheduled = $this->dashboardService->getTodayScheduledServices();
 
             return $this->successResponse([
                 'stats' => $stats,
-                'monthly_data' => $monthlyData,
-                'service_distribution' => $serviceDistribution
+                'recent_activities' => $recentActivities,
+                'today_scheduled' => $todayScheduled
             ], 'Dashboard cargado exitosamente');
 
         } catch (\Exception $e) {
-            return $this->handleException($e, 'Error al cargar dashboard administrativo');
+            \Log::error('Dashboard error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar dashboard: ' . $e->getMessage(),
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => basename($e->getFile())
+            ], 500);
         }
     }
 

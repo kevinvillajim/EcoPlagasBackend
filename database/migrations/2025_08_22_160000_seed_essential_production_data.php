@@ -23,10 +23,10 @@ return new class extends Migration
         $this->seedDefaultAdminUser();
         
         // 4. Create default gallery categories
-        $this->seedGalleryCategories();
+        // $this->seedGalleryCategories();
         
         // 5. Create default notification templates
-        $this->seedNotificationTemplates();
+        // $this->seedNotificationTemplates();
     }
 
     /**
@@ -196,85 +196,94 @@ return new class extends Migration
         }
     }
 
-    private function seedGalleryCategories(): void
-    {
-        // Create some basic gallery items to showcase services
-        $galleryItems = [
-            [
-                'title' => 'Control de Plagas Residencial',
-                'description' => 'Tratamiento profesional en hogares',
-                'category' => 'residential',
-                'is_featured' => true,
-                'is_active' => true,
-                'sort_order' => 1
-            ],
-            [
-                'title' => 'Control de Plagas Comercial',
-                'description' => 'Soluciones para empresas y negocios',
-                'category' => 'commercial',
-                'is_featured' => true,
-                'is_active' => true,
-                'sort_order' => 2
-            ],
-            [
-                'title' => 'Control de Plagas Industrial',
-                'description' => 'Tratamientos especializados industriales',
-                'category' => 'industrial',
-                'is_featured' => true,
-                'is_active' => true,
-                'sort_order' => 3
-            ],
-            [
-                'title' => 'Servicio de Emergencia',
-                'description' => 'Atención inmediata 24/7',
-                'category' => 'emergency',
-                'is_featured' => true,
-                'is_active' => true,
-                'sort_order' => 4
-            ]
-        ];
+    // private function seedGalleryCategories(): void
+    // {
+    //     // Create some basic gallery items to showcase services
+    //     // Based on actual table structure: id, title, description, image_url, video_url, media_type, category, is_active, featured
+    //     $galleryItems = [
+    //         [
+    //             'title' => 'Control de Plagas Residencial',
+    //             'description' => 'Tratamiento profesional en hogares',
+    //             'image_url' => '/storage/gallery/residential-default.jpg',
+    //             'video_url' => null,
+    //             'media_type' => 'image',
+    //             'category' => 'fumigacion_residencial',
+    //             'is_active' => 1,
+    //             'featured' => 1
+    //         ],
+    //         [
+    //             'title' => 'Control de Plagas Comercial',
+    //             'description' => 'Soluciones para empresas y negocios',
+    //             'image_url' => '/storage/gallery/commercial-default.jpg',
+    //             'video_url' => null,
+    //             'media_type' => 'image',
+    //             'category' => 'fumigacion_comercial',
+    //             'is_active' => 1,
+    //             'featured' => 1
+    //         ],
+    //         [
+    //             'title' => 'Control de Plagas Industrial',
+    //             'description' => 'Tratamientos especializados industriales',
+    //             'image_url' => '/storage/gallery/industrial-default.jpg',
+    //             'video_url' => null,
+    //             'media_type' => 'image',
+    //             'category' => 'fumigacion_industrial',
+    //             'is_active' => 1,
+    //             'featured' => 1
+    //         ],
+    //         [
+    //             'title' => 'Servicio de Emergencia',
+    //             'description' => 'Atención inmediata para infestaciones severas',
+    //             'image_url' => '/storage/gallery/emergency-default.jpg',
+    //             'video_url' => null,
+    //             'media_type' => 'image',
+    //             'category' => 'emergencia',
+    //             'is_active' => 1,
+    //             'featured' => 1
+    //         ]
+    //     ];
 
-        foreach ($galleryItems as $item) {
-            // Check if gallery table exists before inserting
-            if (Schema::hasTable('gallery')) {
-                DB::table('gallery')->updateOrInsert(
-                    ['title' => $item['title']],
-                    array_merge($item, [
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ])
-                );
-            }
-        }
-    }
+    //     foreach ($galleryItems as $item) {
+    //         // Check if gallery table exists before inserting
+    //         if (Schema::hasTable('gallery')) {
+    //             DB::table('gallery')->updateOrInsert(
+    //                 ['title' => $item['title']],
+    //                 array_merge($item, [
+    //                     'created_at' => now(),
+    //                     'updated_at' => now()
+    //                 ])
+    //             );
+    //         }
+    //     }
+    // }
 
-    private function seedNotificationTemplates(): void
-    {
-        // Create default notification templates if notifications table exists
-        if (Schema::hasTable('notifications')) {
-            $templates = [
-                [
-                    'type' => 'service_scheduled',
-                    'title' => 'Servicio Programado',
-                    'message' => 'Su servicio ha sido programado exitosamente.',
-                    'data' => json_encode(['template' => true])
-                ],
-                [
-                    'type' => 'service_reminder',
-                    'title' => 'Recordatorio de Servicio',
-                    'message' => 'Recordatorio: Su servicio está programado para mañana.',
-                    'data' => json_encode(['template' => true])
-                ],
-                [
-                    'type' => 'service_completed',
-                    'title' => 'Servicio Completado',
-                    'message' => 'Su servicio ha sido completado satisfactoriamente.',
-                    'data' => json_encode(['template' => true])
-                ]
-            ];
+    // private function seedNotificationTemplates(): void
+    // {
+    //     // Create default notification templates if notifications table exists
+    //     if (Schema::hasTable('notifications')) {
+    //         $templates = [
+    //             [
+    //                 'type' => 'service_scheduled',
+    //                 'title' => 'Servicio Programado',
+    //                 'message' => 'Su servicio ha sido programado exitosamente.',
+    //                 'data' => json_encode(['template' => true])
+    //             ],
+    //             [
+    //                 'type' => 'service_reminder',
+    //                 'title' => 'Recordatorio de Servicio',
+    //                 'message' => 'Recordatorio: Su servicio está programado para mañana.',
+    //                 'data' => json_encode(['template' => true])
+    //             ],
+    //             [
+    //                 'type' => 'service_completed',
+    //                 'title' => 'Servicio Completado',
+    //                 'message' => 'Su servicio ha sido completado satisfactoriamente.',
+    //                 'data' => json_encode(['template' => true])
+    //             ]
+    //         ];
 
-            // These are just template examples - actual notifications will be created per user
-            // This helps document the notification types available
-        }
-    }
+    //         // These are just template examples - actual notifications will be created per user
+    //         // This helps document the notification types available
+    //     }
+    // }
 };

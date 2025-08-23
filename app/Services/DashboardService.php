@@ -28,6 +28,123 @@ class DashboardService
     }
 
     /**
+     * Get recent activities for dashboard
+     */
+    public function getRecentActivities(int $limit = 10): array
+    {
+        $activities = [];
+
+        // Recent completed services
+        $recentServices = Service::with(['user', 'technician'])
+            ->where('status', 'completed')
+            ->where('completed_date', '>=', now()->subDays(7))
+            ->orderBy('completed_date', 'desc')
+            ->limit($limit / 2)
+            ->get();
+
+        foreach ($recentServices as $service) {
+            $activities[] = [
+                'id' => 'service_' . $service->id,
+                'type' => 'service_completed',
+                'client' => $service->user->name ?? 'Cliente desconocido',
+                'service' => $service->type ?? 'Servicio general',
+                'time' => $this->getTimeAgo($service->completed_date),
+                'status' => 'completed',
+                'created_at' => $service->completed_date,
+            ];
+        }
+
+        // Recent new clients
+        $newClients = User::where('role', 'client')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderBy('created_at', 'desc')
+            ->limit($limit / 4)
+            ->get();
+
+        foreach ($newClients as $client) {
+            $activities[] = [
+                'id' => 'client_' . $client->id,
+                'type' => 'new_client',
+                'client' => $client->name,
+                'service' => 'Registro nuevo cliente',
+                'time' => $this->getTimeAgo($client->created_at),
+                'status' => 'active',
+                'created_at' => $client->created_at,
+            ];
+        }
+
+        // Recent certificates issued
+        $recentCertificates = Certificate::with('user')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderBy('created_at', 'desc')
+            ->limit($limit / 4)
+            ->get();
+
+        foreach ($recentCertificates as $certificate) {
+            $activities[] = [
+                'id' => 'certificate_' . $certificate->id,
+                'type' => 'certificate_issued',
+                'client' => $certificate->user->name ?? 'Cliente desconocido',
+                'service' => 'Certificado PDF generado',
+                'time' => $this->getTimeAgo($certificate->created_at),
+                'status' => 'completed',
+                'created_at' => $certificate->created_at,
+            ];
+        }
+
+        // Recent scheduled services
+        $scheduledServices = Service::with(['user', 'technician'])
+            ->where('status', 'scheduled')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderBy('created_at', 'desc')
+            ->limit($limit / 4)
+            ->get();
+
+        foreach ($scheduledServices as $service) {
+            $activities[] = [
+                'id' => 'scheduled_' . $service->id,
+                'type' => 'service_scheduled',
+                'client' => $service->user->name ?? 'Cliente desconocido',
+                'service' => $service->type ?? 'Servicio general',
+                'time' => $this->getTimeAgo($service->created_at),
+                'status' => 'scheduled',
+                'created_at' => $service->created_at,
+            ];
+        }
+
+        // Sort activities by creation date and limit
+        usort($activities, function($a, $b) {
+            return $b['created_at'] <=> $a['created_at'];
+        });
+
+        return array_slice($activities, 0, $limit);
+    }
+
+    /**
+     * Get today's scheduled services
+     */
+    public function getTodayScheduledServices(): array
+    {
+        return Service::with(['user', 'technician'])
+            ->whereDate('scheduled_date', today())
+            ->orderBy('scheduled_time')
+            ->get()
+            ->map(function($service) {
+                return [
+                    'id' => $service->id,
+                    'client_name' => $service->user->name ?? 'Cliente desconocido',
+                    'service_type' => $service->type ?? 'Servicio general',
+                    'scheduled_time' => $service->scheduled_time ? 
+                        Carbon::parse($service->scheduled_time)->format('H:i A') : 'Sin hora específica',
+                    'technician' => $service->technician->name ?? 'Sin asignar',
+                    'status' => $service->status,
+                    'address' => $service->address,
+                ];
+            })
+            ->toArray();
+    }
+
+    /**
      * Get client dashboard statistics
      */
     public function getClientStats(int $userId): array
@@ -202,5 +319,27 @@ class DashboardService
                 ->whereNull('read_at')->count(),
             'total' => \App\Models\Notification::where('user_id', $userId)->count(),
         ];
+    }
+
+    /**
+     * Helper method to format time ago
+     */
+    private function getTimeAgo($datetime): string
+    {
+        $carbon = Carbon::parse($datetime);
+        
+        $diffInMinutes = $carbon->diffInMinutes(now());
+        $diffInHours = $carbon->diffInHours(now());
+        $diffInDays = $carbon->diffInDays(now());
+
+        if ($diffInMinutes < 60) {
+            return $diffInMinutes == 1 ? 'hace 1 minuto' : "hace {$diffInMinutes} minutos";
+        } elseif ($diffInHours < 24) {
+            return $diffInHours == 1 ? 'hace 1 hora' : "hace {$diffInHours} horas";
+        } elseif ($diffInDays < 7) {
+            return $diffInDays == 1 ? 'hace 1 día' : "hace {$diffInDays} días";
+        } else {
+            return $carbon->format('d/m/Y');
+        }
     }
 }
